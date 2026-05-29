@@ -14,3 +14,16 @@ Number of input reads\|Uniquely mapped reads %\|% of reads mapped to multiple lo
 | SRR32154154 | 21874899 | 86.54% | 9.07% | 4.16% | 0.21% |
 
 No se aplicó un filtrado adicional por MAPQ > 10 debido a que las métricas de alineamiento obtenidas con STAR indicaron una calidad adecuada y consistente entre las muestras. En todas las bibliotecas, el porcentaje de lecturas mapeadas de manera única fue alto, entre 80.73% y 86.54%, mientras que la proporción de lecturas multimapeadas se mantuvo en un rango moderado, entre 7.09% y 9.56%. Además, la tasa de mismatch por base fue baja en todas las muestras, entre 0.21% y 0.49%, lo que sugiere una buena concordancia entre las lecturas y el genoma de referencia. Por lo tanto, filtrar por MAPQ podría eliminar lecturas potencialmente informativas sin aportar una mejora sustancial al conjunto de datos. En consecuencia, se decidió conservar los BAM generados por STAR sin filtrado adicional y continuar con el conteo de lecturas por gen, controlando posteriormente la asignación de lecturas ambiguas durante el análisis de cuantificación.
+
+Para determinar la orientación de la librería, se evaluó el conteo con featureCounts usando -s 0, -s 1 y -s 2. La opción -s 0 produjo el mayor número de lecturas asignadas a genes en todas las muestras, mientras que las opciones stranded (-s 1 y -s 2) redujeron considerablemente el número de lecturas asignadas. Por lo tanto, las bibliotecas se trataron como no orientadas (unstranded) y se utilizó -s 0 para generar la matriz final de conteos.
+
+v 1 -> sin --countReadPairs 
+v test 
+
+v 2 -> s 0
+v 3 -> s 1
+v 4 -> s 2
+v 5 -> -t gene
+v 6 -> no -B -C
+
+Para evaluar si los parámetros estrictos de conteo paired-end estaban causando la baja asignación en algunas muestras, se comparó featureCounts con y sin -B y -C. La eliminación de estos parámetros produjo cambios mínimos en el número de fragmentos asignados, por lo que se concluyó que la baja asignación no se debía a filtros de pares alineados o quiméricos. En cambio, la prueba con -t gene aumentó notablemente el número de fragmentos asignados en las muestras problemáticas, lo que sugiere que una proporción importante de sus lecturas cae en regiones génicas no exónicas. Por ello, se mantuvo el conteo estándar por exones agrupados por gen (-t exon -g gene_id) para la matriz final.v
