@@ -1,1 +1,6 @@
-data/raw
+data/raw/*
+data/raw/fastqc/
+!data/raw/fastqc/multiqc/
+data/trimmed
+data/GENCODE
+results/star

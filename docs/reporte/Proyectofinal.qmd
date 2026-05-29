@@ -1,0 +1,62 @@
+---
+title: "Proyecto Final"
+subtitle: "Transcriptómica"
+author: "Andrea Villarruel García"
+date: "27 de mayo de 2026"
+
+format:
+  pdf:
+    documentclass: article
+    papersize: letter
+    toc: false 
+    number-sections: false
+    colorlinks: true
+    mainfont: "Times New Roman" 
+    fontsize: 12pt
+    geometry: margin=2.5cm
+    include-in-header:
+      - text: |
+          \usepackage{ragged2e}
+          \usepackage{setspace}
+          \singlespacing
+          \usepackage{indentfirst}
+          \justifying
+    highlight-style: github
+---
+
+# Planteamiento 
+
+Sí, queda mucho mejor si abres con el **contexto biológico** antes de hablar del dataset. Te dejo una versión más completa y más “biológica” del planteamiento:
+
+---
+
+## Planteamiento
+
+En el mebarazo 
+Durante el embarazo, la placenta funciona como un órgano transitorio esencial para el desarrollo fetal. Su papel no se limita al intercambio de oxígeno, nutrientes y desechos entre la madre y el feto, sino que también participa en la regulación endocrina, metabólica e inmunológica del ambiente intrauterino. Debido a esta posición entre la circulación materna y fetal, la placenta es altamente sensible a cambios en el estado metabólico materno. Por ello, alteraciones en la disponibilidad de glucosa pueden modificar su función y afectar procesos relacionados con el crecimiento fetal, el transporte de nutrientes, la vascularización, la respuesta al estrés celular y la adaptación metabólica.
+
+La glucosa es uno de los principales sustratos energéticos para el crecimiento fetal, por lo que su concentración debe mantenerse dentro de rangos fisiológicos durante la gestación. En condiciones como la diabetes gestacional, los niveles de glucosa materna pueden elevarse de forma sostenida o fluctuar fuera de los rangos normales. Estas alteraciones pueden afectar la placenta, ya que este tejido debe responder al exceso de glucosa y ajustar su actividad molecular para mantener la homeostasis materno-fetal. A nivel transcriptómico, estos cambios pueden reflejarse en la activación o represión de genes relacionados con metabolismo, transporte, angiogénesis, matriz extracelular, inflamación y desarrollo placentario.
+
+En este proyecto se analizará el transcriptoma de **explantes placentarios humanos cultivados ex vivo** bajo distintas concentraciones de glucosa. El objeto de estudio será la respuesta transcripcional de la placenta frente a una condición de **hiperglucemia leve**, utilizando como referencia una condición de **normoglucemia fisiológica**. Esta aproximación permite estudiar de manera controlada cómo un incremento moderado de glucosa puede modificar la expresión génica placentaria, sin depender completamente de la variabilidad clínica presente en muestras obtenidas directamente de pacientes con diabetes gestacional.
+
+Para ello se utilizará el set de datos público **GSE288239**, disponible en la base de datos **Gene Expression Omnibus (GEO)** del NCBI. Este dataset pertenece al estudio de Byford et al., titulado *“Physiological glucose levels associated with gestational diabetes impact the human placental transcriptome in an ex vivo model”*, publicado en *Placenta* en 2025. En dicho trabajo, los autores evaluaron el efecto de niveles fisiológicos de glucosa asociados con diabetes gestacional sobre el transcriptoma de explantes placentarios humanos. El estudio concluye que cambios sutiles en la glucosa materna pueden impactar la placenta y posiblemente contribuir a alteraciones en el crecimiento fetal. ([PubMed][1])
+
+La elección de este set de datos se justifica por varias razones. Primero, trabaja con **placenta humana**, un tejido directamente relacionado con el desarrollo prenatal y con la adaptación fetal al ambiente metabólico materno. Segundo, el diseño experimental permite una comparación clara entre dos condiciones: **5/5.5 mM glucose**, considerada como normoglucemia fisiológica, y **7 mM glucose**, correspondiente a hiperglucemia leve. Tercero, el estudio cuenta con datos crudos de RNA-seq disponibles en SRA, lo que permite ejecutar un pipeline completo desde las lecturas FASTQ hasta la anotación funcional. Finalmente, al tratarse de **Homo sapiens**, existe una anotación genómica y funcional amplia, lo cual facilita el alineamiento, la cuantificación, el análisis de expresión diferencial y la interpretación biológica de los genes identificados.
+
+En este proyecto se seleccionarán únicamente las muestras correspondientes a **5/5.5 mM glucose** y **7 mM glucose**, con cinco réplicas biológicas por condición. La comparación principal será:
+
+**Hiperglucemia leve 7 mM vs normoglucemia fisiológica 5/5.5 mM**
+
+El objetivo general del proyecto es **identificar e interpretar los cambios transcriptómicos inducidos por hiperglucemia leve en explantes placentarios humanos mediante un pipeline completo de RNA-seq**. Para ello, se realizará control de calidad de lecturas, limpieza de datos, alineamiento contra el genoma humano de referencia, cuantificación de expresión génica, análisis de expresión diferencial y anotación funcional.
+
+El propósito biológico del análisis es determinar qué genes y procesos celulares podrían alterarse cuando la placenta se expone a una concentración moderadamente elevada de glucosa. De esta manera, el proyecto busca aportar una interpretación transcriptómica de cómo la hiperglucemia leve puede modificar funciones placentarias relevantes para el desarrollo fetal, como el metabolismo energético, el transporte de nutrientes, la organización vascular, la matriz extracelular y las respuestas de adaptación celular.
+
+Una posible pregunta de investigación sería:
+
+> **¿Cómo modifica la hiperglucemia leve el transcriptoma de explantes placentarios humanos en comparación con una condición de normoglucemia fisiológica?**
+
+# Metodología
+
+Primero se descargaron los datos crudos con prefetch y fastqdump 
+
+-> 
