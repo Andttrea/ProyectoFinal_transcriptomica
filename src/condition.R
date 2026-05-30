@@ -1,10 +1,10 @@
 library(dplyr)
 
-path_archivo <- "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/featurecounts/count_table.tsv"
+path_archivo <- "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/featurecounts/counts_table.tsv"
 
 metadata_table <- read.csv("/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/metadata/SraRunTable.csv",check.names = FALSE)
 
-metadata <- metadata_table %>% select(srr_id = "Run", age = "AGE", sex = "sex") %>% mutate(condicion = age)
+metadata <- metadata_table %>% select(srr_id = "Run", age = "AGE", sex = "sex") %>% mutate(condicion = paste0(age, "_", sex))
 
 tabla_counts <- read.table(path_archivo, header = TRUE, sep = "\t", check.names = FALSE)
 
