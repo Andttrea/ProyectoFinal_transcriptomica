@@ -17,7 +17,7 @@ BAM="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/"
 # -B: requiere que ambas lecturas de un par estén correctamente alineadas para ser contadas. mejora la precisión 
 # -C: evita contar las lecturas que elimina pares quiméricos o inconsistentes.
 # "$BAM": inidiica el archivo BAM de entrada que se va a procesar
-featureCounts -o "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/featurecounts/counts_matrix.txt" \
+featureCounts -o "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/featurecounts/v3/counts_matrix.txt" \
     -T 10 \
     -a "$GTF_FILE" \
     --largestOverlap \
