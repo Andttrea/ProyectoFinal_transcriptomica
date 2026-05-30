@@ -24,12 +24,6 @@ format:
     highlight-style: github
 ---
 
-# Planteamiento 
-
-Sí, queda mucho mejor si abres con el **contexto biológico** antes de hablar del dataset. Te dejo una versión más completa y más “biológica” del planteamiento:
-
----
-
 ## Planteamiento
 
 En el mebarazo 

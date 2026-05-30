@@ -4,11 +4,11 @@ index="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/GENCODE
 Star_time_file="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/star_time.txt"
 
 # Iniciamos nuestro ciclo
-for R1 in /export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/cutadapt/*_1_trimmed.fastq; do
+for R1 in /export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/*_1_trimmed.fastq; do
 # Asignamos el nombre de la muestra a partir del nombre del archivo
 base=$(basename $R1 _1_trimmed.fastq)
 # Definimos donde se encuentran los archivos R2
-R2="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/cutadapt/${base}_2_trimmed.fastq"
+R2="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/${base}_2_trimmed.fastq"
 
 echo "Procesando muestra: $base"
 #Flags:

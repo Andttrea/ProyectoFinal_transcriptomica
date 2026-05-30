@@ -4,7 +4,7 @@ path_archivo <- "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/re
 
 metadata_table <- read.csv("/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/metadata/SraRunTable.csv",check.names = FALSE)
 
-metadata <- metadata_table %>% select(srr_id = "Run", tratamiento = "treatment", geo_id = "Sample Name") %>% mutate(condicion = tratamiento)
+metadata <- metadata_table %>% select(srr_id = "Run", age = "AGE", sex = "sex") %>% mutate(condicion = age)
 
 tabla_counts <- read.table(path_archivo, header = TRUE, sep = "\t", check.names = FALSE)
 

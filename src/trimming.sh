@@ -5,8 +5,8 @@ base=$(basename "$R1" _1.fastq)
 # Definimos el archivo Read2 correspondiente
 R2="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/raw/${base}_2.fastq"
 # Definimos los archivos de salida
-out_R1="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/v4/${base}_1_trimmed.fastq"
-out_R2="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/v4/${base}_2_trimmed.fastq"
+out_R1="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/${base}_1_trimmed.fastq"
+out_R2="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/${base}_2_trimmed.fastq"
 echo "Procesando $base"
 # Ejecutamos fastp
 echo "Ejecutando fastp para $base"
@@ -44,7 +44,7 @@ fastp -i "$R1" -I "$R2" \
 --trim_poly_x \
 --poly_x_min_len 7 \
 -w 10 \
--h "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/v4/${base}_fastp_report.html"
+-h "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trimmed/${base}_fastp_report.html"
 
 done
 echo "Limpieza completada para todas las muestras"
