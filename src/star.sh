@@ -31,17 +31,13 @@ for R1 in /export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/trim
     #archivo correspondiente para single-end.
     # usando las {} se asegura que el tiempo se mida solo para el comando STAR y
     #no para otros comandos que puedan estar en el script.
-    { time STAR --runThreadN 12 \
+    { time STAR --runThreadN 14 \
     --genomeDir "$index" \
     --readFilesIn "$R1" "$R2" \
     --outSAMunmapped None \
     --outReadsUnmapped None \
     --outSAMtype BAM SortedByCoordinate \
     --outFileNamePrefix "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/${base}" ; } 2>> "$Star_time_file"
-
-    bam_file="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/${base}Aligned.sortedByCoord.out.bam"
-
-    samtools index "$bam_file"
 
 done
 echo "Alineamiento y indexación completados para todas las muestras"
