@@ -4,3 +4,4 @@ data/raw/fastqc/
 data/trimmed
 data/GENCODE
 results/star
+data/fastq

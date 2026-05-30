@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 # Asignamos la variable para la ruta del archivo GTF y psara la ruta de los archivos BAM generados por STAR
-GTF_FILE="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/GENCODE/gencode.v49.chr_patch_hapl_scaff.annotation.gtf"
+GTF_FILE="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/data/GENCODE/gencode.vM10.chr_patch_hapl_scaff.annotation.gtf"
 BAM="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/"
 
 # Iniiciamos el featureCounts
