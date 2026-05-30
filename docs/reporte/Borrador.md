@@ -53,4 +53,7 @@ Se evaluó el efecto de utilizar la opción --largestOverlap en featureCounts. E
 | SRR27534529 | 26488182 | 6803333 | 79.56% | 20.44% |
 | SRR27534530 | 24183959 | 6401174 | 79.07% | 20.93% |
 
+Aunque el objetivo principal fue comparar las etapas embrionarias E11.5 y E14.5, el sexo se incluyó como covariable en el diseño estadístico porque el PCA mostró una separación secundaria entre machos y hembras dentro de cada etapa. Dado que ambas etapas contienen muestras de ambos sexos, es posible ajustar el modelo por sexo sin confundirlo con la etapa embrionaria. Así, los genes diferencialmente expresados representan cambios asociados principalmente al desarrollo del telencéfalo, controlando la variación atribuible al sexo.
+
+Con un umbral de FDR < 0.05 y |log2FC| > 0.5 se identificaron 7134 genes diferencialmente expresados, de los cuales 4070 estuvieron sobreexpresados en E14.5 y 3064 disminuidos. Debido a que la comparación corresponde a dos etapas embrionarias distintas, este número elevado de genes es consistente con un cambio transcripcional amplio asociado a la progresión del desarrollo telencefálico. Para enfocar la interpretación en los cambios de mayor magnitud, también se aplicó un umbral más estricto de |log2FC| > 1.
 
