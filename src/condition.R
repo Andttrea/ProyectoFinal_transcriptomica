@@ -12,6 +12,14 @@ srr_names <- colnames(tabla_counts)[-1]
 
 condition_names <- metadata$condicion[match(srr_names, metadata$srr_id)]
 
-colnames(tabla_counts) <- c("Geneid", make.unique(condition_names, sep = "_rep"))
+condition_names_clean <- gsub(" ", "_", condition_names)
+
+# Reemplazar las barras "/" por guiones bajos "_"
+condition_names_clean <- gsub("/", "_", condition_names_clean)
+
+# Eliminar los puntos "." (los reemplazamos por texto vacío "")
+condition_names_clean <- gsub("\\.", "", condition_names_clean)
+
+colnames(tabla_counts) <- c("Geneid", make.unique(condition_names_clean, sep = "_rep"))
 
 write.table(tabla_counts,"/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/featurecounts/condition_table.tsv", sep="\t", quote=F, row.names=F)
