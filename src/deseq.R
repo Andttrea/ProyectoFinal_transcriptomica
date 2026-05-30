@@ -56,16 +56,22 @@ res <- results(dds, contrast=contrast[,"E145_vs_E115"])
 res$Gene_name <- gene_name_map[rownames(res),] 
 
 # Definimos FDR y LFC
-FDR <- 0.05
+FDR <- 0.01
 LFC <- 1
 
 up <- (res$log2FoldChange > LFC) & (res$padj < FDR) 
 up[is.na(up)] <- FALSE
 cat ("Upregulated: ", sum(up), "\n")
+# Output: Upregulated:  2301
 
 down <- (res$log2FoldChange < -LFC) & (res$padj < FDR)
 down[is.na(down)] <- FALSE
 cat ("Downregulated: ", sum(down), "\n")
+# Output: Downregulated:  972
+
+# Guardamos la tabla de resultados
+write.table(res[up,], paste0(out_dir, "deseq-DEG_up_0.01.txt"), sep="\t", quote=FALSE, row.names=TRUE)
+write.table(res[down,], paste0(out_dir, "deseq-DEG_down_0.01.txt"), sep="\t", quote=FALSE, row.names=TRUE)
 
 
 
