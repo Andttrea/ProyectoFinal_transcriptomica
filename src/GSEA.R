@@ -54,10 +54,10 @@ p1 <- gseaplot2(gse, geneSetID = c("GO:0006260","GO:0099504", "GO:0016055"), tit
 p1
 # Guardar el plot de GSEA en tu carpeta
 ggsave(
-  filename = file.path(output_dir, "GSEA_top_pathways.png"),
+  filename = file.path(output_dir, "GSEA.png"),
   plot = p_hibrido,
-  width = 8,
-  height = 6,
+  width = 16,
+  height = 12,
   dpi = 300,
   bg = "white" 
 )
