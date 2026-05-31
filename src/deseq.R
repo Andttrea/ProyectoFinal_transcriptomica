@@ -275,3 +275,5 @@ gene_names = gene_name_map[rownames(log2_tpm),]
 write.table(cbind(gene_names, log2_tpm), paste0(out_dir, "TPM_log2-table.txt"), sep="\t", quote=FALSE)
 
 # --------------------------------------------------- Para calcular TPM -----------------------------------------------------------------#
+
+saveRDS(res, file = "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/deseq/res.rds")
