@@ -37,6 +37,8 @@ gse <- gseGO(
   pvalueCutoff = 0.05             # Umbral de significancia
 )
 
+write.table(gse[ , c(1:10)], file ="/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/anotacion/GSEA/gse_results.txt", sep = "\t")
+
 # Generamos el gseaplot2 múltiple
 # NOTA: Seleccionamos los geneSetID c(1, 43, 392) porque, en conjunto, capturan la fisiopatología 
 # de la sarcopenia en la transición de 9 a 24 meses. Se eligieron estas 3 vías ortogonales para evitar redundancia:
@@ -47,11 +49,12 @@ gse <- gseGO(
 
 # Extraemos el nombre del pathway para el título
 top_pathway_title <- gse$Description[1] 
-p1 <- gseaplot2(gse, geneSetID = c(1, 43,392), title = top_pathway_title, pvalue_table = TRUE)
-
+p1 <- gseaplot2(gse, geneSetID = c("GO:0006260","GO:0099504", "GO:0016055"), title = "PATHWAYS UP-REGULATED Y DOWN-REGULATED", pvalue_table = TRUE)
+"GO:0099504"
+p1
 # Guardar el plot de GSEA en tu carpeta
 ggsave(
-  filename = file.path(output_dir, "GSEA_top1_pathway.png"),
+  filename = file.path(output_dir, "GSEA_top_pathways.png"),
   plot = p1,
   width = 8,
   height = 6,
