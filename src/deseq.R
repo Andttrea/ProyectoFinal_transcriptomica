@@ -117,9 +117,6 @@ ggsave(
 
 # Ahora haremos los heatmaps
 
-# Volvemos a transformar con vst (recomendable hacerlo después de DESeq)
-vsd <- vst(dds, blind = FALSE)
-
 # Filtramos solo genes significativos
 significant <- res[up | down, ]
 
@@ -129,14 +126,7 @@ significant_order <- significant[order(significant$padj), ]
 # Tomamos los 2000 genes más significativos
 top_genes <- head(rownames(significant_order), n = 2000)
 
-# Extraemos la matriz transformada
-mat <- assay(vsd)[top_genes, ]
-
-# Calculamos Z-score por gen
-zscore_t <- t(scale(t(mat)))
-
-# Quitamos genes que hayan generado NA al escalar
-zscore_t <- zscore_t[complete.cases(zscore_t), ]
+zscore_t <-  t(scale(t(log2_tpm[top_genes,]))) 
 
 # Ordenamos columnas por edad y luego por sexo
 orden_columnas <- order(meta_data$age, meta_data$sex)
@@ -196,19 +186,40 @@ dev.off()
 # Seleccionamos los 20 genes más significativos
 top_20_ids <- head(rownames(significant_order), n = 20)
 
-# Extraemos matriz vst
-mat_top20 <- assay(vsd)[top_20_ids, ]
+zscore_top <- t(scale(t(log2_tpm[top_20_ids, ])))
 
-# Calculamos Z-score por gen
-zscore_top20 <- t(scale(t(mat_top20)))
+zscore_top_ordenado <- zscore_top[, orden_columnas]
 
-# Quitamos genes con NA
-zscore_top20 <- zscore_top20[complete.cases(zscore_top20), ]
 
-# Aplicamos el mismo orden de columnas
-zscore_top20_ordenado <- zscore_top20[, orden_columnas]
+heatmap_top20 <- Heatmap(zscore_top_ordenado,
+  cluster_rows = T,
+  cluster_columns = F,
+  row_labels = gene_name_map[rownames(zscore_top_ordenado), ],
+  name = "Z-score",
+  km = 2,
+  column_title = "Top 20 Genes Significativos",
+  column_names_gp = gpar(
+  col = "black",
+  fontsize = 10,
+  fontface = "bold"
+  ),
+  row_names_gp = gpar(
+    fontsize = 10,
+    fontface = "italic" # Los nombres de genes siempre van en cursivas
+    ),
+   top_annotation = HeatmapAnnotation(
+    Edad = meta_data$age[orden_columnas],
+    col = list(
+      Edad = c(
+        "embryonic_day_115" = "#58b4e1",
+        "embryonic_day_145" = "#a473d1")
+  )))
 
-# Etiquetas de columnas usando los nombres actuales de tu tabla
+
+heatmap_top20
+
+# ---------------- V2 Heatmap -----------------------------------------------------------------------------------------#
+# Etiquetas de columnas usando los nombres actuales de la tabla
 sample_labels_top20 <- colnames(zscore_top20)[orden_columnas]
 
 # Obtenemos nombres de genes
@@ -250,6 +261,7 @@ heatmap_top20 <- Heatmap(
 )
 
 heatmap_top20
+# ---------------- V2 Heatmap -----------------------------------------------------------------------------------------#
 
 # Guardamos el heatmap top 20
 png(
@@ -262,6 +274,7 @@ png(
 
 draw(heatmap_top20)
 dev.off()
+
 
 # --------------------------------------------------- Para calcular TPM -----------------------------------------------------------------#
 
@@ -277,3 +290,17 @@ write.table(cbind(gene_names, log2_tpm), paste0(out_dir, "TPM_log2-table.txt"), 
 # --------------------------------------------------- Para calcular TPM -----------------------------------------------------------------#
 
 saveRDS(res, file = "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/deseq/res.rds")
+
+
+# Seleccion de genes para STRING
+
+up_string <- as.data.frame(res) %>% filter(padj < 0.01 & log2FoldChange > 1)
+up_order <- up_string[order(up_string$padj), ]
+string <- head(rownames(up_order), n = 1000)
+write.table(
+  string,
+  file = "/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/deseq/genes_UP_top1000_STRING.txt",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = FALSE
+)
