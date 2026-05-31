@@ -73,21 +73,197 @@ cat ("Downregulated: ", sum(down), "\n")
 write.table(res[up,], paste0(out_dir, "deseq-DEG_up_0.01.txt"), sep="\t", quote=FALSE, row.names=TRUE)
 write.table(res[down,], paste0(out_dir, "deseq-DEG_down_0.01.txt"), sep="\t", quote=FALSE, row.names=TRUE)
 
+# Convertimos resultados a data frame
+res_df <- as.data.frame(res)
+
+# Quitamos genes con padj NA
+res_df <- res_df[!is.na(res_df$padj), ]
+
+# Asignamos los colores para las categorías
+vpcolors <- c("NO" = "gray", "DOWN" = "#790ebc", "UP" = "#558207")
+
+# Creamos la columna DE
+res_df$DE <- "NO"
+res_df$DE[res_df$log2FoldChange > LFC & res_df$padj < FDR] <- "UP"
+res_df$DE[res_df$log2FoldChange < -LFC & res_df$padj < FDR] <- "DOWN"
+
+# La convertimos en factor para controlar el orden de la leyenda
+res_df$DE <- factor(res_df$DE, levels = c("DOWN", "NO", "UP"))
+
+# Creamos la gráfica
+volcano_plot <- ggplot(res_df, aes(x = log2FoldChange, y = -log10(padj), col = DE)) +
+  geom_point(alpha = 0.4, size = 1.5) +
+  labs(
+    title = "Volcano plot: E14.5 vs E11.5",
+    x = "log2 Fold Change",
+    y = "-log10 FDR"
+  ) +
+  scale_color_manual(values = vpcolors) +
+  geom_vline(xintercept = c(-LFC, LFC), col = "black", linetype = "longdash") +
+  geom_hline(yintercept = -log10(FDR), col = "black", linetype = "longdash") +
+  theme_classic(base_size = 15, base_line_size = 1)
+
+# Mostrar la gráfica
+volcano_plot
+
+# Guardar la gráfica
+ggsave(
+  paste0(fig_dir, "volcano_plot_E145_vs_E115.png"),
+  plot = volcano_plot,
+  width = 8,
+  height = 6,
+  dpi = 300
+)
+
+# Ahora haremos los heatmaps
+
+# Volvemos a transformar con vst (recomendable hacerlo después de DESeq)
+vsd <- vst(dds, blind = FALSE)
+
+# Filtramos solo genes significativos
+significant <- res[up | down, ]
+
+# Ordenamos por padj
+significant_order <- significant[order(significant$padj), ]
+
+# Tomamos los 2000 genes más significativos
+top_genes <- head(rownames(significant_order), n = 2000)
+
+# Extraemos la matriz transformada
+mat <- assay(vsd)[top_genes, ]
+
+# Calculamos Z-score por gen
+zscore_t <- t(scale(t(mat)))
+
+# Quitamos genes que hayan generado NA al escalar
+zscore_t <- zscore_t[complete.cases(zscore_t), ]
+
+# Ordenamos columnas por edad y luego por sexo
+orden_columnas <- order(meta_data$age, meta_data$sex)
+zscore_significant <- zscore_t[, orden_columnas]
+
+# Usamos los nombres actuales de tus columnas como etiquetas
+sample_labels <- c(
+  "E14.5_F", "E14.5_F_1", "E14.5_F_2",
+  "E14.5_M", "E14.5_M_1", "E14.5_M_2",
+  "E11.5_F", "E11.5_F_1", "E11.5_F_2",
+  "E11.5_M", "E11.5_M_1", "E11.5_M_2"
+)
+
+sample_labels <- sample_labels[orden_columnas]
+
+# Creamos el heatmap
+heatmap_plot <- Heatmap(
+  zscore_significant,
+  cluster_rows = TRUE,
+  cluster_columns = FALSE,
+  show_row_names = FALSE,
+  name = "Z-score",
+  km = 2,
+  column_title = "Heatmap de los genes diferencialmente expresados",
+  column_names_gp = gpar(
+    col = "black",
+    fontsize = 10,
+    fontface = "bold"
+  ),
+  top_annotation = HeatmapAnnotation(
+    Edad = meta_data$age[orden_columnas],
+    col = list(
+      Edad = c(
+        "embryonic_day_115" = "#58b4e1",
+        "embryonic_day_145" = "#a473d1"
+      )
+    )
+  )
+)
+heatmap_plot
+
+# Guardamos la imagen
+png(
+  paste0(fig_dir, "heatmap_top_genes.png"),
+  width = 11.25,
+  height = 7.5,
+  res = 300,
+  units = "in"
+)
+
+draw(heatmap_plot)
+dev.off()
 
 
+# Para el top 20
 
+# Seleccionamos los 20 genes más significativos
+top_20_ids <- head(rownames(significant_order), n = 20)
 
+# Extraemos matriz vst
+mat_top20 <- assay(vsd)[top_20_ids, ]
 
+# Calculamos Z-score por gen
+zscore_top20 <- t(scale(t(mat_top20)))
 
+# Quitamos genes con NA
+zscore_top20 <- zscore_top20[complete.cases(zscore_top20), ]
 
+# Aplicamos el mismo orden de columnas
+zscore_top20_ordenado <- zscore_top20[, orden_columnas]
 
+# Etiquetas de columnas usando los nombres actuales de tu tabla
+sample_labels_top20 <- colnames(zscore_top20)[orden_columnas]
 
+# Obtenemos nombres de genes
+gene_labels <- gene_name_map[rownames(zscore_top20_ordenado), 1]
+gene_labels <- as.character(gene_labels)
 
+# Si algún gen no tiene nombre, usamos el Ensembl ID
+gene_labels[is.na(gene_labels) | gene_labels == ""] <- rownames(zscore_top20_ordenado)[is.na(gene_labels) | gene_labels == ""]
 
+# Creamos el heatmap top 20
+heatmap_top20 <- Heatmap(
+  zscore_top20_ordenado,
+  cluster_rows = TRUE,
+  cluster_columns = FALSE,
+  show_row_names = TRUE,
+  row_labels = gene_labels,
+  column_labels = sample_labels_top20,
+  name = "Z-score",
+  km = 2,
+  column_title = "Top 20 genes diferencialmente expresados",
+  column_names_gp = gpar(
+    col = "black",
+    fontsize = 10,
+    fontface = "bold"
+  ),
+  row_names_gp = gpar(
+    fontsize = 10,
+    fontface = "italic"
+  ),
+  top_annotation = HeatmapAnnotation(
+    Edad = meta_data$age[orden_columnas],
+    col = list(
+      Edad = c(
+        "embryonic_day_115" = "#58b4e1",
+        "embryonic_day_145" = "#a473d1"
+      )
+    )
+  )
+)
 
+heatmap_top20
 
+# Guardamos el heatmap top 20
+png(
+  paste0(fig_dir, "heatmap_top_20_genes"),
+  width = 11.25,
+  height = 7.5,
+  res = 300,
+  units = "in"
+)
 
+draw(heatmap_top20)
+dev.off()
 
+# --------------------------------------------------- Para calcular TPM -----------------------------------------------------------------#
 
 annotation <- read.delim("/export/storage/users/andreavg/ProyectoFinal_transcriptomica/results/star/featurecounts/lenght_table.tsv", row.names = 1)
 # Calculamos TPM  para el background de genes y guardamos la tabla de TPM log2 transformada
@@ -98,3 +274,4 @@ log2_tpm = apply(log2_fpkm, 2, fpkm2tpm_log2)
 gene_names = gene_name_map[rownames(log2_tpm),]
 write.table(cbind(gene_names, log2_tpm), paste0(out_dir, "TPM_log2-table.txt"), sep="\t", quote=FALSE)
 
+# --------------------------------------------------- Para calcular TPM -----------------------------------------------------------------#
