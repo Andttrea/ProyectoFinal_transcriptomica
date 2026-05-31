@@ -55,9 +55,37 @@ p1
 # Guardar el plot de GSEA en tu carpeta
 ggsave(
   filename = file.path(output_dir, "GSEA_top_pathways.png"),
-  plot = p1,
+  plot = p_hibrido,
   width = 8,
   height = 6,
   dpi = 300,
   bg = "white" 
 )
+
+# Generar el gráfico clásico para tu primera vía (ej. Replicación de ADN)
+p_clasico_1 <- gseaplot(
+  gse, 
+  geneSetID = "GO:0060078", # Cambia por tu ID exacto
+  by = "all",               # Esto asegura que salgan los 3 paneles (curva, líneas, ranking)
+  title = "DNA replication (E11.5)"
+)
+
+print(p_clasico_1)
+
+
+vias_seleccionadas <- c("GO:0006260", "GO:0099504", "GO:0016055", "GO:0060078") 
+
+# Paleta limpia: Verde clásico de GSEA, Rojo suave y Azul claro
+colores_limpios <- c("#1ab4a7", "#8c1782", "#4c822e", "#dca235")
+
+# Generar el gráfico de 3 vías pulido
+p_hibrido <- gseaplot2(
+  gse, 
+  geneSetID = vias_seleccionadas,
+  color = colores_limpios,
+  pvalue_table = FALSE,           # Quitamos la tabla para limpiar el fondo
+  base_size = 20,                 # Letra un poco más grande
+  rel_heights = c(1.5, 0.4, 0.6)  # Hacemos las líneas de "hits" un poco más delgadas para que respire el gráfico
+)
+
+print(p_hibrido)
